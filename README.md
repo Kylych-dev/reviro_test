@@ -55,7 +55,7 @@ Follow these steps to get the project up and running:
 3. ### Access Swagger documentation:
 
     Open your browser and navigate to the following URL: <br>
-    ```http://localhost:8000/swagger/``` <br>
+    ```http://0.0.0.0:8000/swagger/``` <br>
     Here you will find documentation for all available API endpoints, including parameters, request bodies, and response schemas.<br>
 
 
