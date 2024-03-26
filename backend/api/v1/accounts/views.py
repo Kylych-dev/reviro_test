@@ -8,19 +8,14 @@ from django.http import Http404
 
 from apps.accounts.models import CustomUser
 from .serializers import CustomUserSerializer
-from utils.customer_logger import logger
+from utils.customer_logger import log_error, log_warning
 
 
 class CustomUserViewSet(viewsets.ModelViewSet):
-    queryset = CustomUser.objects.select_related("sewing_workshop", "role").all()
+    queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = [permissions.IsAuthenticated]
 
-    def get_queryset(self, *args, **kwargs):
-        qs = super().get_queryset()
-        if self.request.query_params.get("get_my_sewing_workshop"):
-            qs = qs.filter(sewing_workshop_id=self.request.user.sewing_workshop_id)
-        return qs
 
     @swagger_auto_schema(
         method="get",
@@ -57,21 +52,13 @@ class CustomUserViewSet(viewsets.ModelViewSet):
             serializer = CustomUserSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except CustomUser.DoesNotExist as ex:
-            logger.warning(
-                f"Объект не найден",
-                extra={
-                    "Exception": f"{ex}",
-                    "Class": f"{__class__.__name__}.{self.action}",},)
+            log_warning(self, ex)
             return Response(
                 {"Сообщение": "Объект не найден"}, 
                 status=status.HTTP_404_NOT_FOUND
             )
         except Exception as ex:
-            logger.error(
-                f"Ошибка при обработке запроса",
-                extra={
-                    "Exception": f"{ex}",
-                    "Class": f"{__class__.__name__}.{self.action}",},)
+            log_error(self, ex)
             return Response(
                 {"Сообщение": str(ex)}, 
                 status=status.HTTP_400_BAD_REQUEST
@@ -100,16 +87,13 @@ class CustomUserViewSet(viewsets.ModelViewSet):
                     serializer.data, 
                     status=status.HTTP_200_OK
                     )
+            log_error(self, ex)
             return Response(
                 serializer.errors, 
                 status=status.HTTP_400_BAD_REQUEST
                 )
         except CustomUser.DoesNotExist as ex:
-            logger.warning(
-                f"При изменении пользователь не найден",
-                extra={
-                    "Exception": ex,
-                    "error_code": f"{__class__.__name__}.{self.action}",},)
+            log_warning(self, ex)
             return Response(
                 {"Сообщение": "При изменении пользователь не найден"}, 
                 status=status.HTTP_404_NOT_FOUND
@@ -135,12 +119,8 @@ class CustomUserViewSet(viewsets.ModelViewSet):
                 serializer.data, 
                 status=status.HTTP_200_OK
                 )
-        except Http404 as ht:
-            logger.warning(
-                f"Объект не найден",
-                extra={
-                    "Exception": f"{ht}",
-                    "error_code": f"{__class__.__name__}.{self.action}",},)
+        except Http404 as ex:
+            log_warning(self, ex)
             return Response(
                 {"Сообщение": "Объект не найден"}, 
                 status=status.HTTP_404_NOT_FOUND

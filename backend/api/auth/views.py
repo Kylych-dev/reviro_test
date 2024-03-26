@@ -10,53 +10,14 @@ from drf_yasg import openapi
 from datetime import datetime
 
 
-from .serializers import RegisterSerializer, UserListSerializer
+from .serializers import RegisterSerializer
 from apps.accounts.models import CustomUser
-from utils.customer_logger import logger
-
-
-
-class UserListView(views.APIView):
-    serializer_class = UserListSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-
-
-    @swagger_auto_schema(
-    operation_description="Получение списка пользователей.",
-    operation_summary="Получение списка пользователей",
-    operation_id="get_user_list",
-    tags=["Users"],
-    responses={
-        200: openapi.Response(description="OK - Список пользователей получен успешно."),
-        403: openapi.Response(description="Forbidden - Недостаточно прав для выполнения операции."),
-        },
-    )
-    def get(self, request):
-        user = request.user
-        if user.role != 1:
-            
-            return Response({
-                'success': False,
-                'status_code': status.HTTP_403_FORBIDDEN,
-                'message': 'You are not authorized to perform this action'
-            }, 
-            status.HTTP_403_FORBIDDEN
-            )
-        users = CustomUser.objects.all()
-        serializer = self.serializer_class(users, many=True)
-        return Response({
-            'success': True,
-            'status_code': status.HTTP_200_OK,
-            'message': 'Successfully fetched users',
-            'users': serializer.data}, 
-            status=status.HTTP_200_OK)
-    
+from utils.customer_logger import log_error
 
 
 
 class RegisterView(viewsets.ViewSet):
     serializer_class = RegisterSerializer
-    permission_classes = (permissions.AllowAny,)
 
     @swagger_auto_schema(
         operation_description="Создание нового пользователя.",
@@ -85,37 +46,31 @@ class RegisterView(viewsets.ViewSet):
                         status=status.HTTP_400_BAD_REQUEST
                     )
                 role = validated_data.get('role')
-
-                user = CustomUser.objects.create_user(email=email, role=role, password=validated_data.get("password"))
+                user = CustomUser.objects.create_user(
+                    email=email, 
+                    role=role, 
+                    password=validated_data.get("password")
+                    )
                 user.set_password(validated_data.get("password"))
                 user.save()
-
-                logger.info(
-                f"Пользователь создан",
-                extra={
-                    "Exception": f"успещно создан пользователь",
-                    "Class": f"{__class__.__name__}.{self.action}",},)
                 return Response(
                     serializer.data, 
                     status=status.HTTP_201_CREATED
                     )
             except Exception as ex:
-                logger.error(
-                    f"Клиент не найден",
-                    extra={
-                        "Exception": ex,
-                        "Class": f"{self.__class__.__name__}.{self.action}",},)
+                log_error(self, ex)
                 return Response(
                     data={"error": f"User creation failed: {str(ex)}"},
                     status=status.HTTP_400_BAD_REQUEST,)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
+            log_error(self, ex)
+            return Response(
+                serializer.errors, 
+                status=status.HTTP_400_BAD_REQUEST
+                )
 
 
 class UserAuthenticationView(viewsets.ViewSet):
-    permission_classes = (permissions.AllowAny,)
 
     @swagger_auto_schema(
         operation_description="Авторизация пользователя для получения токена.",
@@ -194,6 +149,5 @@ class UserAuthenticationView(viewsets.ViewSet):
                     "Отсутствует refresh_token", 
                     status=status.HTTP_400_BAD_REQUEST
                 )
-
         except TokenError:
             raise AuthenticationFailed("Не правильный токен")

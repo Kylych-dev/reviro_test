@@ -2,6 +2,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework import viewsets, status
 from rest_framework.pagination import PageNumberPagination
+from rest_framework.exceptions import PermissionDenied
 
 
 from drf_yasg.utils import swagger_auto_schema
@@ -9,13 +10,17 @@ from drf_yasg import openapi
 
 from apps.establishment.models import Establishment
 from .serializers import EstablishmentSerializer
-
+from utils.permissio import (
+    IsManagerOrReadOnly)
+from utils.customer_logger import log_error, log_warning
 
 
 class EstablishmentModelViewSet(viewsets.ModelViewSet):
     queryset = Establishment.objects.all()
     serializer_class = EstablishmentSerializer
     pagination_class = PageNumberPagination
+    permission_classes = [IsManagerOrReadOnly,]
+
 
     @swagger_auto_schema(
         method="get",
@@ -35,6 +40,7 @@ class EstablishmentModelViewSet(viewsets.ModelViewSet):
         serializer = self.serializer_class(self.queryset, many=True)
         return Response(serializer.data)
 
+
     @swagger_auto_schema(
         method="put",
         operation_description="Обновление данных учреждений",
@@ -43,9 +49,7 @@ class EstablishmentModelViewSet(viewsets.ModelViewSet):
         tags=["Establishment"],
         responses={
             200: openapi.Response(description="OK - Объект успешно обновлен"),
-            400: openapi.Response(
-                description="Bad Request - Неверный запрос или некорректные данные"
-            ),
+            400: openapi.Response(description="Bad Request - Неверный запрос или некорректные данные"),
             401: openapi.Response(description="Unauthorized - Неавторизованный запрос"),
             404: openapi.Response(description="Not Found - Ресурс не найден"),
         },
@@ -61,11 +65,18 @@ class EstablishmentModelViewSet(viewsets.ModelViewSet):
                     serializer.data, 
                     status=status.HTTP_200_OK
                     )
+            log_error(self, ex)
             return Response(
                 serializer.errors, 
                 status=status.HTTP_400_BAD_REQUEST
                 )
+        except PermissionDenied:
+            return Response(
+                {"Сообщение": "У вас недостаточно прав для выполнения этого действия."}, 
+                status=status.HTTP_403_FORBIDDEN
+                )
         except Exception as ex:
+            log_warning(self, ex)
             return Response(
                 {"Сообщение": str(ex)}, 
                 status=status.HTTP_404_NOT_FOUND
@@ -90,9 +101,15 @@ class EstablishmentModelViewSet(viewsets.ModelViewSet):
             serializer = self.get_serializer(data=request.data)
             serializer.is_valid(raise_exception=True)
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(
+                serializer.data, 
+                status=status.HTTP_201_CREATED
+                )
         except Exception as ex:
-            return Response({"Сообщение": str(ex)}, status=status.HTTP_400_BAD_REQUEST)
+            return Response(
+                {"Сообщение": str(ex)}, 
+                status=status.HTTP_400_BAD_REQUEST
+                )
 
 
     @swagger_auto_schema(
@@ -113,5 +130,9 @@ class EstablishmentModelViewSet(viewsets.ModelViewSet):
             instance = self.get_object()
             instance.delete()
             return Response(status=status.HTTP_204_NO_CONTENT)
-        except Establishment.DoesNotExist:
-            return Response({"Сообщение": "Учреждение не найден"}, status=status.HTTP_404_NOT_FOUND)
+        except Exception as ex:
+            log_warning(self, ex)
+            return Response(
+                {"Сообщение": str(ex)}, 
+                status=status.HTTP_404_NOT_FOUND
+                )

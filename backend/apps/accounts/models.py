@@ -29,11 +29,10 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         help_text=_("Designates whether the user can log into this admin site."),)
     is_active = models.BooleanField(
         _("active"),
-        default=False,
+        default=True,
         help_text=_(
             "Designates whether this user should be treated as active. "
             "Unselect this instead of deleting accounts."),)
-    verification_code = models.CharField(verbose_name=_("verification code"), null=True, blank=True, max_length=6)
     date_joined = models.DateTimeField(_("date joined"), default=timezone.now)
     updated_at = models.DateTimeField(_("date updated"), auto_now_add=True)
 

@@ -11,7 +11,27 @@ class CustomUserSerializer(serializers.ModelSerializer):
             "first_name",
             "last_name",
             "role",
-            "phone_number",
-            "sewing_workshop",
-            "employment_status",
         ]
+
+
+
+
+'''
+    uid
+    role 
+    email
+    first_name 
+    last_name 
+    profile 
+    is_staff 
+    is_active 
+    verification_code
+    date_joined 
+    updated_at 
+
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
+
+    objects = UserManager()
+'''

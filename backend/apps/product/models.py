@@ -10,7 +10,7 @@ class Product(models.Model):
     description = models.TextField(verbose_name="Description")
     price = models.DecimalField(max_digits=10, decimal_places=2, verbose_name="Price")
     quantity_in_stock = models.IntegerField(verbose_name="Quantity in Stock")
-    unit = models.CharField(max_length=20)
+    availability_status = models.BooleanField(default=True, verbose_name="Availability Status")
     production_date = models.DateField()
     expiration_date = models.DateField()
     category = models.CharField(max_length=100)
