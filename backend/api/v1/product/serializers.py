@@ -14,6 +14,7 @@ class ProductSerializer(serializers.ModelSerializer):
             'quantity_in_stock',
             'production_date',
             'expiration_date',
+            'availability_status',
             'establishment'
 
         )

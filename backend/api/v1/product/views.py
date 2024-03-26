@@ -1,7 +1,9 @@
 from rest_framework.decorators import action
 from rest_framework.response import Response
-from rest_framework import viewsets, status
+from rest_framework import viewsets, status, permissions
 from rest_framework.pagination import PageNumberPagination
+from rest_framework import filters
+from django_filters.rest_framework import DjangoFilterBackend
 
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
@@ -9,6 +11,7 @@ from drf_yasg import openapi
 from apps.product.models import Product
 from .serializers import ProductSerializer
 from utils.customer_logger import log_error, log_warning
+from utils.permissio import IsManagerOrReadOnly
 
 
 
@@ -16,7 +19,11 @@ from utils.customer_logger import log_error, log_warning
 class ProductModelViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
+    permission_classes = [permissions.IsAuthenticated, IsManagerOrReadOnly]
     pagination_class = PageNumberPagination
+    filter_backends = [DjangoFilterBackend, filters.SearchFilter]
+    filterset_fields = ['availability_status']
+    search_fields = ['name']
     lookup_field = 'pk'
 
     @swagger_auto_schema(
@@ -34,7 +41,8 @@ class ProductModelViewSet(viewsets.ModelViewSet):
     )
     @action(detail=False, method=["get"])
     def list(self, request, *args, **kwargs):
-        serializer = self.serializer_class(self.queryset, many=True)
+        queryset = self.filter_queryset(self.get_queryset())  # Применяем фильтры, если они заданы
+        serializer = self.serializer_class(queryset, many=True)
         return Response(serializer.data)
 
     @swagger_auto_schema(
