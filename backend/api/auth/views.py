@@ -1,63 +1,113 @@
 from django.shortcuts import get_object_or_404
 from rest_framework_simplejwt.tokens import AccessToken, RefreshToken
 from rest_framework_simplejwt.exceptions import AuthenticationFailed, TokenError
-from rest_framework import status, viewsets, permissions
+from rest_framework import status, viewsets, permissions, views
+from rest_framework_simplejwt.settings import api_settings
 from rest_framework.response import Response
 
 from drf_yasg.utils import swagger_auto_schema
 from drf_yasg import openapi
+from datetime import datetime
 
-from .serializers import RegisterSerializer
+
+from .serializers import RegisterSerializer, UserListSerializer
 from apps.accounts.models import CustomUser
 from utils.customer_logger import logger
 
 
+
+class UserListView(views.APIView):
+    serializer_class = UserListSerializer
+    permission_classes = (permissions.IsAuthenticated,)
+
+
+    @swagger_auto_schema(
+    operation_description="Получение списка пользователей.",
+    operation_summary="Получение списка пользователей",
+    operation_id="get_user_list",
+    tags=["Users"],
+    responses={
+        200: openapi.Response(description="OK - Список пользователей получен успешно."),
+        403: openapi.Response(description="Forbidden - Недостаточно прав для выполнения операции."),
+        },
+    )
+    def get(self, request):
+        user = request.user
+        if user.role != 1:
+            
+            return Response({
+                'success': False,
+                'status_code': status.HTTP_403_FORBIDDEN,
+                'message': 'You are not authorized to perform this action'
+            }, 
+            status.HTTP_403_FORBIDDEN
+            )
+        users = CustomUser.objects.all()
+        serializer = self.serializer_class(users, many=True)
+        return Response({
+            'success': True,
+            'status_code': status.HTTP_200_OK,
+            'message': 'Successfully fetched users',
+            'users': serializer.data}, 
+            status=status.HTTP_200_OK)
+    
+
+
+
 class RegisterView(viewsets.ViewSet):
-    permission_classes = (permissions.AllowAny,)
     serializer_class = RegisterSerializer
+    permission_classes = (permissions.AllowAny,)
 
     @swagger_auto_schema(
         operation_description="Создание нового пользователя.",
         operation_summary="Создание нового пользователя",
         operation_id="register_user",
-        tags=["Регистрация(register)"],
+        tags=["Authentication"],
         responses={
             201: openapi.Response(description="OK - Регистрация прошла успешно."),
             400: openapi.Response(description="Bad Request - Неверный запрос."),
         },
     )
     def register(self, request, *args, **kwargs):
+        print(request.data, '<<<<<<<<<<<<_______________________')
         serializer = RegisterSerializer(data=request.data)
         if serializer.is_valid(raise_exception=True):
             try:
                 validated_data = serializer.validated_data
+                email = validated_data.get("email")
                 validated_data.pop("password2")
-                user_workshop = (
-                    None
-                    if request.user.is_anonymous
-                    else request.user.sewing_workshop_id
-                )
-                user = CustomUser(
-                    sewing_workshop_id=user_workshop,
-                    **validated_data,
-                )
+
+                # Проверяем наличие пользователя
+                existing_user = CustomUser.objects.filter(email=email).exists()
+                if existing_user:
+                    return Response(
+                        data={"error": "Пользователь с таким email уже существует"},
+                        status=status.HTTP_400_BAD_REQUEST
+                    )
+                role = validated_data.get('role')
+
+                user = CustomUser.objects.create_user(email=email, role=role, password=validated_data.get("password"))
                 user.set_password(validated_data.get("password"))
                 user.save()
 
-                return Response(serializer.data, status=status.HTTP_201_CREATED)
-
+                logger.info(
+                f"Пользователь создан",
+                extra={
+                    "Exception": f"успещно создан пользователь",
+                    "Class": f"{__class__.__name__}.{self.action}",},)
+                return Response(
+                    serializer.data, 
+                    status=status.HTTP_201_CREATED
+                    )
             except Exception as ex:
                 logger.error(
                     f"Клиент не найден",
                     extra={
                         "Exception": ex,
-                        "Class": f"{self.__class__.__name__}.{self.action}",
-                    },
-                )
+                        "Class": f"{self.__class__.__name__}.{self.action}",},)
                 return Response(
                     data={"error": f"User creation failed: {str(ex)}"},
-                    status=status.HTTP_400_BAD_REQUEST,
-                )
+                    status=status.HTTP_400_BAD_REQUEST,)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -71,11 +121,9 @@ class UserAuthenticationView(viewsets.ViewSet):
         operation_description="Авторизация пользователя для получения токена.",
         operation_summary="Авторизация пользователя для получения токена",
         operation_id="login_user",
-        tags=["Вход(login)"],
+        tags=["Authentication"],
         responses={
-            200: openapi.Response(
-                description="OK - Авторизация пользователя прошла успешно."
-            ),
+            200: openapi.Response(description="OK - Авторизация пользователя прошла успешно."),
             400: openapi.Response(description="Bad Request - Неверный запрос."),
             404: openapi.Response(description="Not Found - Пользователь не найден"),
         },
@@ -83,9 +131,7 @@ class UserAuthenticationView(viewsets.ViewSet):
     def login(self, request):
         email = request.data["email"]
         password = request.data["password"]
-
         try:
-            email = normalize_phone_number(email)
             user = CustomUser.objects.get(email=email)
 
         except CustomUser.DoesNotExist:
@@ -100,10 +146,25 @@ class UserAuthenticationView(viewsets.ViewSet):
         access_token = AccessToken.for_user(user)
         refresh_token = RefreshToken.for_user(user)
 
+        # ___________________________________________________________
+        # Допольнительная ифнормация о токене
+        access_token_lifetime = api_settings.ACCESS_TOKEN_LIFETIME
+        refresh_token_lifetime = api_settings.REFRESH_TOKEN_LIFETIME
+        current_datetime = datetime.now()
+        access_token_expiration = current_datetime + access_token_lifetime
+        refresh_token_expiration = current_datetime + refresh_token_lifetime
+        # ___________________________________________________________
+
         return Response(
             data={
                 "access_token": str(access_token),
+                "access_token_expires": access_token_expiration.strftime("%Y-%m-%d %H:%M:%S"),
+
                 "refresh_token": str(refresh_token),
+                "refresh_token_expires": refresh_token_expiration.strftime("%Y-%m-%d %H:%M:%S"),
+                
+                "email": user.email,
+                "role": user.role,
             },
             status=status.HTTP_200_OK,
         )
@@ -112,11 +173,9 @@ class UserAuthenticationView(viewsets.ViewSet):
         operation_description="Выход для удаления токена.",
         operation_summary="Выход для удаления токена",
         operation_id="logout_user",
-        tags=["Выход(logout)"],
+        tags=["Authentication"],
         responses={
-            201: openapi.Response(
-                description="OK - Выход пользователя прошла успешно."
-            ),
+            201: openapi.Response(description="OK - Выход пользователя прошла успешно."),
             400: openapi.Response(description="Bad Request - Неверный запрос."),
         },
     )
@@ -127,17 +186,14 @@ class UserAuthenticationView(viewsets.ViewSet):
                 if refresh_token:
                     token = RefreshToken(refresh_token)
                     token.blacklist()
-                return Response("Вы вышли из учетной записи", status=status.HTTP_200_OK)
+                return Response("Вы вышли из учетной записи", 
+                                status=status.HTTP_200_OK
+                                )
             else:
                 return Response(
-                    "Отсутствует refresh_token", status=status.HTTP_400_BAD_REQUEST
+                    "Отсутствует refresh_token", 
+                    status=status.HTTP_400_BAD_REQUEST
                 )
-            refresh_token = request.data["refresh_token"]
-            if refresh_token:
-                token = RefreshToken(refresh_token)
-                token.blacklist()
-
-            return Response("Вы вышли из учетной записи", status=status.HTTP_200_OK)
 
         except TokenError:
             raise AuthenticationFailed("Не правильный токен")

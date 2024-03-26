@@ -30,7 +30,8 @@ INSTALLED_APPS = [
 
     # apps
     'apps.product',
-    'apps.establishment'
+    'apps.establishment',
+    'apps.accounts'
 
 ]
 
@@ -65,24 +66,26 @@ TEMPLATES = [
 WSGI_APPLICATION = 'core.wsgi.application'
 
 
-# DATABASES = {
-    # 'default': {
-        # 'ENGINE': 'django.db.backends.sqlite3',
-        # 'NAME': BASE_DIR / 'db.sqlite3',
-    # }
-# }
-
-
 DATABASES = {
-    "default": {
-        "ENGINE": config("SQL_ENGINE"),
-        "NAME": config("DB_NAME"),
-        "USER": config("DB_USER"),
-        "PASSWORD": config("DB_PASSWORD"),
-        "HOST": config("DB_HOST"),
-        "PORT": config("DB_PORT")
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
     }
 }
+
+
+# DATABASES = {
+#     "default": {
+#         "ENGINE": config("SQL_ENGINE"),
+#         "NAME": config("DB_NAME"),
+#         "USER": config("DB_USER"),
+#         "PASSWORD": config("DB_PASSWORD"),
+#         "HOST": config("DB_HOST"),
+#         "PORT": config("DB_PORT")
+#     }
+# }
+
+AUTH_USER_MODEL = "accounts.CustomUser"
 
 AUTH_PASSWORD_VALIDATORS = [
     {'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',},
@@ -125,6 +128,7 @@ SIMPLE_JWT = {
      'BLACKLIST_AFTER_ROTATION': True
 }
 
+APPEND_SLASH = True
 
 EMAIL_BACKEND = config('EMAIL_BACKEND')
 EMAIL_PORT = config('EMAIL_PORT', cast=int)
@@ -132,3 +136,6 @@ EMAIL_USE_TLS = config('EMAIL_USE_TLS', cast=bool)
 EMAIL_HOST = config('EMAIL_HOST')
 EMAIL_HOST_USER = config('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = config('EMAIL_HOST_PASSWORD')
+
+if DEBUG:
+    from .dev_settings import *

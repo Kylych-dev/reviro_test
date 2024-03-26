@@ -4,32 +4,41 @@ from apps.accounts.models import CustomUser
 
 
 class RegisterSerializer(serializers.ModelSerializer):
-    password = serializers.CharField(
-        write_only=True, required=True, validators=[validate_password]
-    )
+    email = serializers.EmailField(required=True)
+    role = serializers.CharField()
+    # role = serializers.ChoiceField(choices=CustomUser.ROLE_CHOICES)
+    password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True)
-    first_name = serializers.CharField(required=True)
-    last_name = serializers.CharField(required=True)
+
+    print(role, '*****************************************')
 
     class Meta:
         model = CustomUser
         fields = (
+            "email",
+            "role",
             "password",
             "password2",
-            "first_name",
-            "last_name",
+
         )
         extra_kwargs = {
             "password": {"write_only": True},
-            "first_name": {"required": True},
-            "last_name": {"required": True},
+            # "first_name": {"required": True},
+            # "last_name": {"required": True},
         }
 
     def validate(self, attrs):
         if attrs["password"] != attrs["password2"]:
             raise serializers.ValidationError(
-                {"password": "Password fields didn't match."}
-            )
-
+                {"password": "Password fields didn't match."})
         return attrs
 
+
+class UserListSerializer(serializers.ModelSerializer):
+    """Список пользователей, только для админов"""
+    class Meta:
+        model = CustomUser
+        fields = (
+            'email',
+            'role'
+        )
