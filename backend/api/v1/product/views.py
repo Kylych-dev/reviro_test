@@ -14,8 +14,6 @@ from utils.customer_logger import log_error, log_warning
 from utils.permissio import IsManagerOrReadOnly
 
 
-
-
 class ProductModelViewSet(viewsets.ModelViewSet):
     queryset = Product.objects.all()
     serializer_class = ProductSerializer
