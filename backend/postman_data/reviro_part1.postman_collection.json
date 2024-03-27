@@ -1,0 +1,424 @@
+{
+	"info": {
+		"_postman_id": "befffe4b-6f93-48e2-8d8a-432fe81a21a8",
+		"name": "reviro_part1",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "19278337"
+	},
+	"item": [
+		{
+			"name": "register_user",
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"user@mail.ru\",\n    \"role\": \"user\",\n    \"password\": \"mirbekov 1993\",\n    \"password2\": \"mirbekov 1993\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:4000/api/v1/register/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"v1",
+						"register",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "register_manager",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"manager@mail.ru\",\n    \"role\": \"manager\",\n    \"password\": \"mirbekov 1993\",\n    \"password2\": \"mirbekov 1993\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:4000/api/v1/register/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"v1",
+						"register",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login_user",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"user@mail.ru\",\n    \"password\": \"mirbekov 1993\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:4000/api/v1/login/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"v1",
+						"login",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login_manager",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"manager@mail.ru\",\n    \"password\": \"mirbekov 1993\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:4000/api/v1/login/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"v1",
+						"login",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "login_admin",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"admin@mail.ru\",\n    \"password\": 1,\n    \"password2\": 1\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:4000/api/v1/login/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"v1",
+						"login",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "product_list",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzExNDY5MTI5LCJpYXQiOjE3MTE0NjU1MjksImp0aSI6ImZjMDQzNDBmOWU4NTRjZWZiNmM0OGNhZmZkNjU5ZjJjIiwidXNlcl9pZCI6Mn0.ZNJJxnA2XBeMLpeh2r0CKNysBiCg_VcL51mj8H9eNXc",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"roger@mail.ru\",\n    \"password\": \"mirbekov 1993\",\n    \"password2\": \"mirbekov 1993\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:4000/api/v1/product/?search=bounty",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"v1",
+						"product",
+						""
+					],
+					"query": [
+						{
+							"key": "availability_status",
+							"value": "true",
+							"disabled": true
+						},
+						{
+							"key": "search",
+							"value": "bounty"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "product_create_manager",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzExNDY4NjI3LCJpYXQiOjE3MTE0NjUwMjcsImp0aSI6ImI5MmY1ZGYwNjA4MjQ4MjZiMGI0YjhkZWQ0OTFlMWIxIiwidXNlcl9pZCI6M30.keCF6SwZY2xJ8vPOTEMtyDmBuqYlOiGVWS5mU51gC9Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"name\": \"snickers\",\n  \"description\": \"batonchik\",\n  \"price\": 5.99,\n  \"quantity_in_stock\": 10,\n  \"production_date\": \"2024-03-31\",\n  \"expiration_date\": \"2024-04-30\",\n  \"establishment\": \"23c53f97-4005-4182-a5f3-eac4858fef8f\"\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:4000/api/v1/product/create/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"v1",
+						"product",
+						"create",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "establ_create_manager",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzExNDY4NjI3LCJpYXQiOjE3MTE0NjUwMjcsImp0aSI6ImI5MmY1ZGYwNjA4MjQ4MjZiMGI0YjhkZWQ0OTFlMWIxIiwidXNlcl9pZCI6M30.keCF6SwZY2xJ8vPOTEMtyDmBuqYlOiGVWS5mU51gC9Q",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"dordoi\",\n    \"description\": \"megamarket\",\n    \"locations\": \"bishkek\",\n    \"opening_hours\": \"24/7\",\n    \"requirements\": \"dresscode\",\n    \"manager\": 1\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:4000/api/v1/establishment/create/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"v1",
+						"establishment",
+						"create",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "establ_update_manager",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzExNDU2MTk3LCJpYXQiOjE3MTE0NTI1OTcsImp0aSI6ImZlY2I0ZDVhMDgyZDQ3YjVhYTlmYjk5Mjk5ZWRjYmZhIiwidXNlcl9pZCI6Mn0.sVt_qv9TM2LC_jE278ZvKowvNSRFeG1K5LdHC7zY8dE",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"name\": \"zara\",\n    \"description\": \"trade center\",\n    \"locations\": \"milan\",\n    \"opening_hours\": \"24/7\",\n    \"requirements\": \"drcode\",\n    \"manager\": 1\n}\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:4000/api/v1/establishment/update/41d8e64f-d66a-4ed2-a41d-8097475d76fe/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"v1",
+						"establishment",
+						"update",
+						"41d8e64f-d66a-4ed2-a41d-8097475d76fe",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "establ_update_manager Copy",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ0b2tlbl90eXBlIjoiYWNjZXNzIiwiZXhwIjoxNzExNDU2NzEzLCJpYXQiOjE3MTE0NTMxMTMsImp0aSI6IjlmYmE0NzNhZWU0YjQ2NGM5ZDdiZmYyM2VkZjI0ZTVmIiwidXNlcl9pZCI6NH0.s1C_cRI3LdKb-Wp7xiPDkBixB3pYllzD_qxfOkqqgLU",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"email\": \"roger@mail.ru\",\n    \"password\": \"mirbekov 1993\",\n    \"password2\": \"mirbekov 1993\"\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://127.0.0.1:4000/api/v1/establishment/",
+					"protocol": "http",
+					"host": [
+						"127",
+						"0",
+						"0",
+						"1"
+					],
+					"port": "4000",
+					"path": [
+						"api",
+						"v1",
+						"establishment",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

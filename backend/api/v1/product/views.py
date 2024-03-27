@@ -130,5 +130,4 @@ class ProductModelViewSet(viewsets.ModelViewSet):
             log_warning(self, ex)
             return Response(
                 {"Сообщение": str(ex)}, 
-                status=status.HTTP_404_NOT_FOUND
-                )
+                status=status.HTTP_404_NOT_FOUND)
