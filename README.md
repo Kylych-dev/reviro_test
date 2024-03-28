@@ -12,12 +12,12 @@ Here is a list of available endpoints for the API:
 | '`api/v1/logout/`'                      | User logout                                           |
 | '`api/v1/users/`'                       | List all users                                        |
 | '`api/v1/users/profile/`'               | Retrieve authenticated user profile                   |
-| '`api/v1/users/<slug:slug>/`'           | Retrieve user detail by slug                          |
-| '`api/v1/users/<slug:slug>/`'           | Update user detail by slug                            |
+| '`api/v1/users/<uuid:pk>/update/`'           | Retrieve user detail by slug                          |
+| '`api/v1/users/<uuid:pk>/`'           | Update user detail by slug                            |
 | '`api/v1/product/`'                     | List all products                                     |
 | '`api/v1/product/create/`'              | Create a new product                                  |
-| '`api/v1/product/update/<pk>/`'         | Update an existing product (identified by its primary key) |
-| '`api/v1/product/delete/<pk>/`'         | Delete an existing product (identified by its primary key)|
+| '`api/v1/product/update/<uuid>/`'         | Update an existing product (identified by its primary key) |
+| '`api/v1/product/delete/<uuid>/`'         | Delete an existing product (identified by its primary key)|
 | '`api/v1/establishment/`'               | List all establishments                               |
 | '`api/v1/establishment/create/`'        | Create a new establishment                            |
 | '`api/v1/establishment/update/<uuid:pk>/`' | Update an existing establishment (identified by its UUID)|
@@ -36,6 +36,19 @@ This project is a simple product inventory management system. It allows users to
 update, delete, and view information about establishments and products in the inventory.<br>
 
 ## _Update_ 
+
+
+All views.py files are collected in this directory. <br>
+
+Also, inside api/, create two directories auth/ and v1/. <br>
+
+auth/ - in any case, I always handle my own authentication (for example, token-based), as well as various permissions for API endpoints, etc. <br>
+
+v1/ - API version, in the future it can be changed to v2.0, v3.0, etc. Here directories (python packages, identical to the application names in <br>apps) are collected, inside which views.py files are already located."<br>
+
+
+
+
 Introduced **<u>fixtures</u>** to provide stable environments for automated _testing_. <br>
 Implemented **<u>logging</u>** functionality to track actions and errors, enhancing debugging capabilities and process monitoring. <br>
 Included a **<u>Postman collection</u>** for streamlined API testing, enabling efficient verification of endpoint functionality. <br>
@@ -202,7 +215,7 @@ pip install -r requirements.txt
 Load Fixtures:
 
 ``` bash
-./manage loaddata fixtures backup.json
+./manage loaddata fixtures main.json
 ```
 
 ### Run Tests:
