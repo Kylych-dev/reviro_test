@@ -24,7 +24,7 @@ urlpatterns.extend(
         path("users/", CustomUserViewSet.as_view({"get": "list"}), name="user-list"),
         path("users/profile/", CustomUserViewSet.as_view({"get": "user_profile"}), name="user-profile"),
         path("users/<uuid:pk>/", CustomUserViewSet.as_view({"get": "user_detail"}), name="user-detail"),
-        path("users/<uuid:pk>/", CustomUserViewSet.as_view({"put": "update_detail"}), name="update-detail"),
+        path("users/<uuid:pk>/update/", CustomUserViewSet.as_view({"put": "update_update"}), name="update-detail"),
 
 
         # product

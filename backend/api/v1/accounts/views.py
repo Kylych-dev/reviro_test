@@ -15,7 +15,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
     queryset = CustomUser.objects.all()
     serializer_class = CustomUserSerializer
     permission_classes = [permissions.IsAuthenticated]
-    lookup_field = 'pk'
+    # lookup_field = 'pk'
 
 
     @swagger_auto_schema(
@@ -49,7 +49,7 @@ class CustomUserViewSet(viewsets.ModelViewSet):
     @action(detail=True, methods=["get"])
     def user_detail(self, request, *args, **kwargs):
         try:
-            user = self.queryset.get(email=kwargs.get("email"))
+            user = self.queryset.get(uuid=kwargs.get("uuid"))
             serializer = CustomUserSerializer(user)
             return Response(serializer.data, status=status.HTTP_200_OK)
         except CustomUser.DoesNotExist as ex:
@@ -78,9 +78,9 @@ class CustomUserViewSet(viewsets.ModelViewSet):
         },
     )
     @action(detail=True, methods=["put"])
-    def update_detail(self, request, *args, **kwargs):
+    def update_update(self, request, *args, **kwargs):
         try:
-            user = self.queryset.get(email=kwargs.get("email"))
+            user = self.queryset.get(uuid=kwargs.get("uuid"))
             serializer = CustomUserSerializer(user, data=request.data, partial=True)
             if serializer.is_valid():
                 serializer.save()
