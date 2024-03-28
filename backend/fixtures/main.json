@@ -1,0 +1,93 @@
+[
+    {
+        "model": "establishment.establishment",
+        "pk": "37a86ddd-faf4-4a9d-b08a-da1d0341dc9e",
+        "fields": {
+            "name": "ramstor",
+            "description": "qwerty",
+            "locations": "bishkek",
+            "opening_hours": "10",
+            "requirements": "qwerty",
+            "manager": 3
+        }
+    },
+    {
+        "model": "accounts.customuser",
+        "pk": 1,
+        "fields": {
+            "password": "pbkdf2_sha256$720000$GpiOMH6aGbfpr2Qp1iUIQe$7VX6rlajIEfWCt7xdUFnEqUX0bVDXPnC5Yb7JqYlrpg=",
+            "last_login": "2024-03-28T00:55:23.313Z",
+            "is_superuser": true,
+            "uuid": "1a33e346-89ef-4597-b5c1-4dc0e2faab99",
+            "role": null,
+            "email": "admin@mail.ru",
+            "first_name": "",
+            "last_name": "",
+            "profile": "",
+            "is_staff": true,
+            "is_active": true,
+            "date_joined": "2024-03-28T00:53:16.909Z",
+            "updated_at": "2024-03-28T00:53:17.059Z",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "accounts.customuser",
+        "pk": 2,
+        "fields": {
+            "password": "pbkdf2_sha256$720000$Hd5T6BNxQT5Z86ggzL7Jaz$11xym2oaFlP2OFp86TqC7C+wRRd050dr5Pxf85QsMRE=",
+            "last_login": null,
+            "is_superuser": false,
+            "uuid": "d04d4f12-1ce2-48c2-b577-7c82eb2deef7",
+            "role": "user",
+            "email": "user@mail.ru",
+            "first_name": "",
+            "last_name": "",
+            "profile": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2024-03-28T00:55:37.198Z",
+            "updated_at": "2024-03-28T00:55:37.360Z",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "accounts.customuser",
+        "pk": 3,
+        "fields": {
+            "password": "pbkdf2_sha256$720000$vVyWzNmD7wTbzgAHi4pjCw$jW33/ek6s/gxSZp93sd5a72dM8qrLszKUO819RCCdbI=",
+            "last_login": null,
+            "is_superuser": false,
+            "uuid": "ef4afa35-772e-4250-8e50-bd47854f2708",
+            "role": "manager",
+            "email": "manager@mail.ru",
+            "first_name": "",
+            "last_name": "",
+            "profile": "",
+            "is_staff": false,
+            "is_active": true,
+            "date_joined": "2024-03-28T00:55:46.526Z",
+            "updated_at": "2024-03-28T00:55:46.682Z",
+            "groups": [],
+            "user_permissions": []
+        }
+    },
+    {
+        "model": "product.product",
+        "pk": "a3b463d3-4f80-419c-a74f-c7b3f9fac4e9",
+        "fields": {
+            "name": "bounty",
+            "description": "qwerty",
+            "price": "10.99",
+            "quantity_in_stock": 10,
+            "availability_status": true,
+            "production_date": "2024-03-28",
+            "expiration_date": "2024-03-28",
+            "category": "qwerty",
+            "manufacturer": "qwerty",
+            "establishment": "37a86ddd-faf4-4a9d-b08a-da1d0341dc9e"
+        }
+    }
+]
