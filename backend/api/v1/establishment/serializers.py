@@ -7,7 +7,6 @@ class EstablishmentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Establishment
         fields = (
-            'uuid'
             'name',
             'description',
             'locations',
