@@ -6,6 +6,7 @@ from api.v1.accounts.views import CustomUserViewSet
 
 from api.v1.product.views import ProductModelViewSet
 from api.v1.establishment.views import EstablishmentModelViewSet
+from api.v1.wishlist.views import WishlistModelViewSet
 
 router = DefaultRouter(trailing_slash=False)
 
@@ -38,5 +39,14 @@ urlpatterns.extend(
         path("establishment/create/", EstablishmentModelViewSet.as_view({"post": "create"}), name="establishment-create"),
         path("establishment/update/<uuid:pk>/", EstablishmentModelViewSet.as_view({"put": "update"}), name="establishment-update"),
         path("establishment/delete/<uuid:pk>/",EstablishmentModelViewSet.as_view({"delete": "delete"}), name="establishment-delete"),
+
+
+
+
+        # path("users/entry-check/", WishlistItemViewSet.as_view({"get": "list"}), name="entry-chick-list"),
+        #
+        # # Wishlist
+        path('add-wishlist/', WishlistModelViewSet.as_view({"post": "add_wishlist"}), name='add_wishlist'),
+        path('my-wishlist/', WishlistModelViewSet.as_view({"get": "my_wishlist"}), name='my_wishlist'),
     ]
 )

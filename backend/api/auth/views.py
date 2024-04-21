@@ -86,8 +86,11 @@ class UserAuthenticationView(viewsets.ViewSet):
     def login(self, request):
         email = request.data["email"]
         password = request.data["password"]
+        # print(CustomUser.objects.get(email=email), '---------------------------')
+        print(CustomUser.objects.filter(email=email).first(), '----------------------')
         try:
-            user = CustomUser.objects.get(email=email)
+            # user = CustomUser.objects.get(email=email)
+            user = CustomUser.objects.filter(email=email).first()
 
         except CustomUser.DoesNotExist:
             raise AuthenticationFailed("Такого пользователя не существует")
